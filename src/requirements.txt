@@ -1,0 +1,4 @@
+huggingface-hub
+psutil
+torch
+rich
