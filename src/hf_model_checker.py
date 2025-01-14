@@ -23,7 +23,7 @@ with open("quant_multipliers.json", "r") as file:
 
 def get_system_memory() -> Tuple[float, float]:
     ram_gb: float = psutil.virtual_memory().total / (1024**3)
-    vram_gb: float = 0.0
+    vram_gb: float = -1.0
     if torch.cuda.is_available():
         device: int = torch.cuda.current_device()
         vram_gb = torch.cuda.get_device_properties(device).total_memory / (1024**3)
@@ -152,6 +152,15 @@ def analyze_huggingface_url(repo_url: str) -> None:
     with progress:
         progress.add_task("Analyzing system resources...", total=None)
         ram_gb, vram_gb = get_system_memory()
+
+        if vram_gb == -1:
+            console.print(
+                "[red]CUDA is not available or not properly installed/configured on this system.[/red]\n"
+                "[red]If you already have CUDA installed, please ensure the following packages are compatible with the same CUDA version: torch, torchaudio, torchvision.[/red]\n"
+                "[red]If unsure, consider reinstalling PyTorch with the appropriate CUDA version using the official index: https://pytorch.org/get-started/locally/. [/red]"
+            )
+            return
+
 
         if "/blob/main/" in path_part:
             repo_id, file_path = path_part.split("/blob/main/", 1)

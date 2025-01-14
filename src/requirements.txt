@@ -1,4 +1,6 @@
 huggingface-hub
 psutil
 torch
+torchaudio
+torchvision
 rich
